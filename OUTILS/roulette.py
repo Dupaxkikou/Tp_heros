@@ -1,9 +1,8 @@
 """Jeu de roulette française : tirage, paris et argent du joueur."""
 
 import random
-import time
 
-from ASCII.ascii_roulette import afficher_roulette
+from ASCII.ascii_roulette import ROUGES, animer_tirage, ecran_resultat
 
 
 ROUE: list = [
@@ -12,34 +11,13 @@ ROUE: list = [
     31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26,
 ]
 
-ROUGES: list = [
-    1, 3, 5, 7, 9, 12, 14, 16, 18,
-    19, 21, 23, 25, 27, 30, 32, 34, 36,
-]
-
 
 def _lancer_bille() -> int:
-    """Effectue un tirage et anime la bille pendant environ quatre secondes."""
+    """Tire la case gagnante au hasard et anime la bille jusqu'à cette case."""
 
-    nombre_cases: int = len(ROUE)
-    index_depart: int = random.randint(0, nombre_cases - 1)
-    index_gagnant: int = random.randint(0, nombre_cases - 1)
-    distance: int = (index_gagnant - index_depart) % nombre_cases
-    distance = distance + nombre_cases * 3
-
-    nombre_images: int = 40
-    image: int = 0
-    while image < nombre_images:
-        position: int = (index_depart + distance * image // (nombre_images - 1)) % nombre_cases
-        afficher_roulette(ROUE, position)
-
-        pause: float = 0.025 + image * 0.15 / (nombre_images - 1)
-        time.sleep(pause)
-        image = image + 1
-
-    numero_gagnant: int = ROUE[index_gagnant]
-    afficher_roulette(ROUE, index_gagnant, numero_gagnant)
-    return numero_gagnant
+    index_gagnant: int = random.randint(0, len(ROUE) - 1)
+    animer_tirage(ROUE, index_gagnant)
+    return ROUE[index_gagnant]
 
 
 def roulette(gameState: dict) -> float:
@@ -65,7 +43,7 @@ def roulette(gameState: dict) -> float:
             print("Choix invalide. Partie annulée.")
         else:
             mise_saisie: str = input("Combien veux-tu miser ? ").strip()
-            if not mise_saisie.isdigit():
+            if not mise_saisie.isdecimal():
                 print("Mise invalide. Partie annulée.")
             else:
                 mise: int = int(mise_saisie)
@@ -89,15 +67,8 @@ def roulette(gameState: dict) -> float:
 
                     gameState["argent"] = argent + gain_net
 
+                    ecran_resultat(numero_gagnant, gain_net, mise, gameState["argent"])
                     print()
-                    if gain_net > 0:
-                        print("Bravo ! Tu gagnes", gain_net, "euros de bénéfice.")
-                    elif numero_gagnant == 0 and choix in ["1", "2"]:
-                        print("Le zéro sort : la règle du partage te fait perdre", mise / 2, "euros.")
-                    else:
-                        print("Perdu ! Tu perds", mise, "euros.")
-
-                    print("Résultat :", numero_gagnant)
                     print(f"Il te reste {gameState['argent']:g} euros.")
 
     return gain_net
