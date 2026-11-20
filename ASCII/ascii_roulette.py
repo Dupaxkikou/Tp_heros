@@ -1,73 +1,58 @@
-"""
-Animation ASCII d'une roulette française.
-ascii_roulette() renvoie le numéro gagnant, entre 0 et 36.
-"""
-import random
-import time
+"""Affichage en couleur de la roue de roulette française."""
 
-ROULETTE: list = [
-    0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13,
-    36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14,
-    31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
+
+ROUGES: list = [
+    1, 3, 5, 7, 9, 12, 14, 16, 18,
+    19, 21, 23, 25, 27, 30, 32, 34, 36,
 ]
 
 
-def afficher_roulette(position: int, numero_final: int = -1) -> None:
-    """Affiche une représentation ASCII de la roulette."""
+def _case_coloree(numero: int) -> str:
+    """Retourne le numéro encadré par les couleurs de sa case."""
 
-    taille: int = len(ROULETTE)
-    n1: int = ROULETTE[position % taille]
-    n2: int = ROULETTE[(position + 5) % taille]
-    n3: int = ROULETTE[(position + 10) % taille]
-    n4: int = ROULETTE[(position + 15) % taille]
-    n5: int = ROULETTE[(position + 20) % taille]
-    n6: int = ROULETTE[(position + 25) % taille]
-    n7: int = ROULETTE[(position + 30) % taille]
-    n8: int = ROULETTE[(position + 35) % taille]
+    if numero == 0:
+        couleur: str = "\033[97;42m"  # blanc sur vert
+    elif numero in ROUGES:
+        couleur = "\033[97;41m"      # blanc sur rouge
+    else:
+        couleur = "\033[97;40m"      # blanc sur noir
+
+    res: str = couleur + " " + str(numero).rjust(2) + " \033[0m"
+    return res
+
+
+def afficher_roulette(roue: list, position: int, numero_final: int = -1) -> None:
+    """Dessine la roue à la position donnée, sans effectuer de tirage."""
+
+    taille: int = len(roue)
+    n1: str = _case_coloree(roue[position % taille])
+    n2: str = _case_coloree(roue[(position + 5) % taille])
+    n3: str = _case_coloree(roue[(position + 10) % taille])
+    n4: str = _case_coloree(roue[(position + 15) % taille])
+    n5: str = _case_coloree(roue[(position + 20) % taille])
+    n6: str = _case_coloree(roue[(position + 25) % taille])
+    n7: str = _case_coloree(roue[(position + 30) % taille])
+    n8: str = _case_coloree(roue[(position + 35) % taille])
 
     print("\033[2J\033[H", end="")
-    print("          LE GRAND CASINO ROYAL")
-    print("               ROULETTE")
+    print("              LE GRAND CASINO ROYAL")
+    print("                       ROULETTE")
     print()
-    print("                   ▼")
-    print("          .-----------------.")
-    print("       .-'                   '-.")
-    print("     .'       " + str(n1).rjust(2) + "                '.")
-    print("    /   " + str(n8).rjust(2) + "                   " + str(n2).rjust(2) + "   \\")
-    print("   |                           |")
-    print("   |   " + str(n7).rjust(2) + "        ( O )        " + str(n3).rjust(2) + "   |")
-    print("   |                           |")
-    print("    \\   " + str(n6).rjust(2) + "                   " + str(n4).rjust(2) + "   /")
-    print("     '.       " + str(n5).rjust(2) + "                .'")
-    print("       '-.                 .-'")
-    print("          '---------------'")
+    print("                          ▼")
+    print("                 .-----------------.")
+    print("              .-'                   '-.")
+    print("            .'          " + n1 + "          '.")
+    print("           /   " + n8 + "                 " + n2 + "   \\")
+    print("          |                               |")
+    print("          |   " + n7 + "       (  O  )       " + n3 + "   |")
+    print("          |                               |")
+    print("           \\   " + n6 + "                 " + n4 + "   /")
+    print("            '.          " + n5 + "          .'")
+    print("              '-.                 .-'")
+    print("                 '---------------'")
     print()
+
     if numero_final == -1:
-        print("             LA BILLE TOURNE...")
+        print("                  LA BILLE TOURNE...")
     else:
-        print("          NUMERO GAGNANT :", numero_final)
-
-
-def ascii_roulette() -> int:
-    """Fait tourner la roulette et renvoie le numéro gagnant."""
-
-    index_depart: int = random.randint(0, 36)
-    index_gagnant: int = random.randint(0, 36)
-
-    distance: int = (index_gagnant - index_depart) % 37
-    distance = distance + 37 * 3
-
-    etape: int = 0
-    while etape <= distance:
-        position: int = (index_depart + etape) % 37
-        afficher_roulette(position)
-        pause: float = 0.035 + (etape / distance) * 0.18
-        time.sleep(pause)
-        etape = etape + 1
-
-    numero_gagnant: int = ROULETTE[index_gagnant]
-    afficher_roulette(index_gagnant, numero_gagnant)
-    print()
-    print("       La bille s'est arretee !")
-    print()
-    return numero_gagnant
+        print("                NUMÉRO GAGNANT : " + _case_coloree(numero_final))
