@@ -31,14 +31,14 @@ def _lancer_bille() -> int:
     image: int = 0
     while image < nombre_images:
         position: int = (index_depart + distance * image // (nombre_images - 1)) % nombre_cases
-        afficher_roulette(ROUE, position)
+        afficher_roulette(ROUE, ROUGES, position)
 
         pause: float = 0.025 + image * 0.15 / (nombre_images - 1)
         time.sleep(pause)
         image = image + 1
 
     numero_gagnant: int = ROUE[index_gagnant]
-    afficher_roulette(ROUE, index_gagnant, numero_gagnant)
+    afficher_roulette(ROUE, ROUGES, index_gagnant, numero_gagnant)
     return numero_gagnant
 
 
@@ -56,12 +56,18 @@ def roulette(gameState: dict) -> float:
         print("Tu n'as plus d'argent pour jouer.")
     else:
         print()
-        print("1 - Miser sur rouge (bénéfice : 1 fois la mise)")
-        print("2 - Miser sur noir (bénéfice : 1 fois la mise)")
-        print("3 - Miser sur vert (le zéro, bénéfice : 35 fois la mise)")
+        print("1 - Rouge  |  2 - Noir  |  3 - Vert (zéro)")
+        print("Rouge/noir : bénéfice égal à la mise ; vert : 35 fois la mise.")
 
-        choix: str = input("Ton choix : ").strip()
-        if choix not in ["1", "2", "3"]:
+        choix: str = input("Ton choix (rouge/noir/vert) : ").strip().lower()
+        if choix == "1":
+            choix = "rouge"
+        elif choix == "2":
+            choix = "noir"
+        elif choix == "3":
+            choix = "vert"
+
+        if choix not in ["rouge", "noir", "vert"]:
             print("Choix invalide. Partie annulée.")
         else:
             mise_saisie: str = input("Combien veux-tu miser ? ").strip()
@@ -76,13 +82,13 @@ def roulette(gameState: dict) -> float:
                     print("Tu mises", mise, "euros.")
                     numero_gagnant: int = _lancer_bille()
 
-                    if choix == "1" and numero_gagnant in ROUGES:
+                    if choix == "rouge" and numero_gagnant in ROUGES:
                         gain_net = mise
-                    elif choix == "2" and numero_gagnant != 0 and numero_gagnant not in ROUGES:
+                    elif choix == "noir" and numero_gagnant != 0 and numero_gagnant not in ROUGES:
                         gain_net = mise
-                    elif choix == "3" and numero_gagnant == 0:
+                    elif choix == "vert" and numero_gagnant == 0:
                         gain_net = mise * 35
-                    elif choix in ["1", "2"] and numero_gagnant == 0:
+                    elif choix in ["rouge", "noir"] and numero_gagnant == 0:
                         gain_net = -mise / 2
                     else:
                         gain_net = -mise
@@ -92,7 +98,7 @@ def roulette(gameState: dict) -> float:
                     print()
                     if gain_net > 0:
                         print("Bravo ! Tu gagnes", gain_net, "euros de bénéfice.")
-                    elif numero_gagnant == 0 and choix in ["1", "2"]:
+                    elif numero_gagnant == 0 and choix in ["rouge", "noir"]:
                         print("Le zéro sort : la règle du partage te fait perdre", mise / 2, "euros.")
                     else:
                         print("Perdu ! Tu perds", mise, "euros.")
