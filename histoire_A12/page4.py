@@ -3,7 +3,7 @@ def page4(gameState: dict) -> int:
 
     print("                  ")
     print("Vous ouvrz le casier du cuisto ")
-    print("Vous trouvez une malette etrange qui contient 400 euros de jetons de casinp")
+    print("Vous trouvez une malette étrange qui contient 400 euros de jetons de casinp")
     print("Que faites-vous ?")
     print("1 - Vous volez le contenus de la malette    2 - Lui expliquer qu'il y a confusion et que vous êtes juste le nv employé")
     choix: str = input("> ")
