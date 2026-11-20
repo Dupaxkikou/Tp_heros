@@ -250,9 +250,9 @@ def image_roue(roue: list, rotation: float, billes: list,
 def lignes_image(image: list) -> list:
     """Transforme l'image en lignes de terminal (2 pixels par caractère ▀)."""
     res = []
-    for y in range(0, HAUTEUR, 2):
+    for y in range(0, len(image), 2):
         ligne = ""
-        for x in range(LARGEUR):
+        for x in range(len(image[0])):
             ligne += fg(image[y][x]) + bg(image[y + 1][x]) + "▀"
         res.append(ligne + RESET)
     return res
@@ -474,11 +474,9 @@ def afficher_grille(grille: list) -> None:
     print("\033[H" + "\n".join(lignes))
 
 
-def resultat_couleur(numero: int, gain_net: float, mise: int, argent: float) -> None:
-    """Écran de résultat animé : confettis si gagné, parasites si perdu."""
-    genre = issue(numero, gain_net)
+def animer_ecran(base: list, genre: str) -> None:
+    """Anime un écran de résultat : confettis si gagné, parasites sinon."""
     style = STYLES[genre]
-    base = construire_ecran(numero, gain_net, mise, argent)
 
     palette = [CYAN, ROSE, OR, (120, 255, 160), BLANC]
     confettis = []
@@ -513,6 +511,11 @@ def resultat_couleur(numero: int, gain_net: float, mise: int, argent: float) -> 
 
         afficher_grille(grille)
         time.sleep(0.08)
+
+
+def resultat_couleur(numero: int, gain_net: float, mise: int, argent: float) -> None:
+    """Écran de résultat de la roulette."""
+    animer_ecran(construire_ecran(numero, gain_net, mise, argent), issue(numero, gain_net))
 
 
 def resultat_simple(numero: int, gain_net: float, mise: int, argent: float) -> None:

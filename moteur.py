@@ -8,8 +8,9 @@ Organisation des fichiers :
         ascii_gameover.py  <- contient def ascii_gameover()
         ascii_dragon.py    <- contient def ascii_dragon()
         ...
-    OUTILS/                <- fonctions annexes réutilisables (combats...)
-        combat.py
+    OUTILS/                <- fonctions annexes réutilisables (roulette, dés...)
+        roulette.py
+        des.py
     histoire_A12/          <- un dossier par histoire
         menu.py            <- contient def menu()
         page1.py           <- contient def page1(gameState)
@@ -36,7 +37,7 @@ Pour afficher un dessin dans une page :
     ascii_dragon()
 
 Pour utiliser une fonction annexe :
-    from OUTILS.combat import combat_dragon
+    from OUTILS.roulette import roulette
 
 Déroulement : menu() est appelée en premier, puis la page 1.
 
