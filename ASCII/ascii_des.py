@@ -159,8 +159,7 @@ def afficher_image_des(image: list, titre: str, pied: str) -> None:
 
 def animation_couleur(de1: int, de2: int) -> None:
     """Lancer animé : les dés rebondissent, tournent, puis se posent."""
-    titre = ligne_degrade("★  D É S  D U  C A S I N O  ★", LARGEUR,
-                          lambda t: melanger(ROSE, CYAN, t))
+    titre = ligne_degrade("★  D É S  D U  C A S I N O  ★", LARGEUR, [ROSE, CYAN])
     finales = [de1, de2]
     faces = [random.randint(1, 6), random.randint(1, 6)]
     nb_images = 48
@@ -233,8 +232,7 @@ def construire_ecran_des(de1: int, de2: int, gain_net: float, mise: int, argent:
     style = STYLES[genre]
     grille = grille_vide()
 
-    ecrire_degrade(grille, 0, style["banniere"],
-                   lambda t: melanger(style["debut"], style["fin"], t))
+    ecrire_degrade(grille, 0, style["banniere"], style["degrade"])
 
     dessiner_nombre(grille, 2, de1 + de2, style)
 
@@ -245,9 +243,8 @@ def construire_ecran_des(de1: int, de2: int, gain_net: float, mise: int, argent:
         message = "PERDU : -" + f"{mise:g}" + " €"
     else:
         message = "BÉNÉFICE : +" + f"{gain_net:g}" + " €"
-    ecrire_degrade(grille, 13, message, lambda t: melanger(BLANC, OR, 0.4 + 0.6 * t))
-    ecrire_degrade(grille, 14, "Ton argent : " + f"{argent:g}" + " €",
-                   lambda t: melanger(CYAN, ROSE, t))
+    ecrire_degrade(grille, 13, message, [melanger(BLANC, OR, 0.4), OR])
+    ecrire_degrade(grille, 14, "Ton argent : " + f"{argent:g}" + " €", [CYAN, ROSE])
     return grille
 
 

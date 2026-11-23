@@ -16,11 +16,9 @@ Technique : comme pour le crâne du GAME OVER, deux pixels sont dessinés dans u
 caractère "▀" (moitié haute = couleur du texte, moitié basse = couleur du fond).
 """
 
-import colorsys
 import math
 import random
 import time
-from typing import Callable
 
 from ASCII.ascii_gameover import bg, couleurs_disponibles, fg, RESET
 
@@ -40,6 +38,8 @@ CASE_ROUGE: tuple = (215, 25, 60)
 CASE_NOIRE: tuple = (52, 48, 72)
 CASE_VERTE: tuple = (0, 170, 85)
 PISTE: tuple = (35, 12, 55)
+ARC_EN_CIEL: list = [(255, 70, 70), (255, 170, 50), (255, 235, 60), (80, 230, 120),
+                     (40, 205, 225), (110, 110, 255), (210, 90, 255)]
 BRUIT: tuple = (90, 20, 60)
 
 # Dimensions de l'image de la roue (en pixels : 2 pixels par ligne de terminal)
@@ -109,10 +109,12 @@ def nom_couleur(numero: int) -> str:
     return res
 
 
-def arc_en_ciel(t: float) -> tuple:
-    """Couleur de l'arc-en-ciel pour t entre 0 et 1."""
-    r, v, b = colorsys.hsv_to_rgb(t * 0.83, 0.8, 1.0)
-    return (int(r * 255), int(v * 255), int(b * 255))
+def couleur_degrade(palette: list, t: float) -> tuple:
+    """Couleur au point t (de 0 à 1) d'un dégradé qui traverse toutes les couleurs de la palette."""
+    position = t * (len(palette) - 1)
+    i = min(int(position), len(palette) - 2)
+    res = melanger(palette[i], palette[i + 1], position - i)
+    return res
 
 
 # ----------------------------------------------------------------------------
@@ -132,11 +134,11 @@ def ligne_composee(morceaux: list, largeur: int) -> str:
     return res
 
 
-def ligne_degrade(texte: str, largeur: int, couleur: Callable) -> str:
-    """Ligne centrée dont chaque lettre prend la couleur donnée par couleur(t)."""
+def ligne_degrade(texte: str, largeur: int, palette: list) -> str:
+    """Ligne centrée dont les lettres suivent un dégradé (liste de couleurs)."""
     morceaux = []
     for i in range(len(texte)):
-        morceaux.append((texte[i], couleur(i / max(1, len(texte) - 1)), FOND))
+        morceaux.append((texte[i], couleur_degrade(palette, i / max(1, len(texte) - 1)), FOND))
     return ligne_composee(morceaux, largeur)
 
 
@@ -300,8 +302,7 @@ def animation_couleur(roue: list, index_gagnant: int) -> None:
     numero = roue[index_gagnant]
     nb_images = 60
 
-    titre = ligne_degrade("★  R O U L E T T E  ★", LARGEUR,
-                          lambda t: melanger(ROSE, CYAN, t))
+    titre = ligne_degrade("★  R O U L E T T E  ★", LARGEUR, [ROSE, CYAN])
 
     print("\033[2J", end="")
     for i in range(nb_images + 1):
@@ -362,14 +363,14 @@ def animer_tirage(roue: list, index_gagnant: int) -> None:
 
 # un style par issue : bannière, dégradé des chiffres, ombre, confettis ou bruit
 STYLES: dict = {
-    "jackpot": {"banniere": "★ ★ ★  J A C K P O T  ★ ★ ★", "debut": None, "fin": None,
+    "jackpot": {"banniere": "★ ★ ★  J A C K P O T  ★ ★ ★", "degrade": ARC_EN_CIEL,
                 "haut": OR, "bas": ROSE, "ombre": (20, 70, 110), "confettis": True},
-    "gagne": {"banniere": "★ ★ ★   G A G N É   ★ ★ ★", "debut": OR, "fin": ROSE,
+    "gagne": {"banniere": "★ ★ ★   G A G N É   ★ ★ ★", "degrade": [OR, ROSE],
               "haut": OR, "bas": ROSE, "ombre": (20, 70, 110), "confettis": True},
-    "partage": {"banniere": "P A R T A G E", "debut": (255, 170, 60), "fin": (200, 60, 40),
+    "partage": {"banniere": "P A R T A G E", "degrade": [(255, 170, 60), (200, 60, 40)],
                 "haut": (255, 180, 70), "bas": (200, 80, 50), "ombre": (70, 25, 12),
                 "confettis": False},
-    "perdu": {"banniere": "P E R D U", "debut": (255, 90, 90), "fin": (110, 20, 45),
+    "perdu": {"banniere": "P E R D U", "degrade": [(255, 90, 90), (110, 20, 45)],
               "haut": (255, 110, 110), "bas": (170, 40, 70), "ombre": (60, 12, 40),
               "confettis": False},
 }
@@ -404,11 +405,11 @@ def ecrire(grille: list, y: int, x: int, texte: str, couleur: tuple, fond: tuple
         grille[y][x + i] = [texte[i], couleur, fond]
 
 
-def ecrire_degrade(grille: list, y: int, texte: str, couleur: Callable) -> None:
-    """Écrit un texte centré, lettre par lettre, avec la couleur couleur(t)."""
+def ecrire_degrade(grille: list, y: int, texte: str, palette: list) -> None:
+    """Écrit un texte centré dont les lettres suivent un dégradé (liste de couleurs)."""
     x = (LARGEUR_ECRAN - len(texte)) // 2
     for i in range(len(texte)):
-        grille[y][x + i] = [texte[i], couleur(i / max(1, len(texte) - 1)), FOND]
+        grille[y][x + i] = [texte[i], couleur_degrade(palette, i / max(1, len(texte) - 1)), FOND]
 
 
 def dessiner_nombre(grille: list, y0: int, numero: int, style: dict) -> None:
@@ -438,11 +439,7 @@ def construire_ecran(numero: int, gain_net: float, mise: int, argent: float) -> 
     style = STYLES[genre]
     grille = grille_vide()
 
-    if style["debut"] is None:
-        ecrire_degrade(grille, 0, style["banniere"], arc_en_ciel)
-    else:
-        ecrire_degrade(grille, 0, style["banniere"],
-                       lambda t: melanger(style["debut"], style["fin"], t))
+    ecrire_degrade(grille, 0, style["banniere"], style["degrade"])
 
     dessiner_nombre(grille, 2, numero, style)
 
@@ -456,10 +453,9 @@ def construire_ecran(numero: int, gain_net: float, mise: int, argent: float) -> 
         message = "PARTAGE : tu perds la moitié de ta mise (-" + f"{mise / 2:g}" + " €)"
     else:
         message = "BÉNÉFICE : +" + f"{gain_net:g}" + " €"
-    ecrire_degrade(grille, 13, message, lambda t: melanger(BLANC, OR, 0.4 + 0.6 * t))
+    ecrire_degrade(grille, 13, message, [melanger(BLANC, OR, 0.4), OR])
 
-    ecrire_degrade(grille, 14, "Ton argent : " + f"{argent:g}" + " €",
-                   lambda t: melanger(CYAN, ROSE, t))
+    ecrire_degrade(grille, 14, "Ton argent : " + f"{argent:g}" + " €", [CYAN, ROSE])
     return grille
 
 
@@ -493,7 +489,10 @@ def animer_ecran(base: list, genre: str) -> None:
     for j in range(nb_images):
         grille = []
         for ligne in base:
-            grille.append([list(case) for case in ligne])
+            copie = []
+            for case in ligne:
+                copie.append(list(case))
+            grille.append(copie)
 
         if style["confettis"]:
             # les confettis tombent et finissent par se poser à leur place finale
