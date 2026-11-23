@@ -9,9 +9,9 @@ def page2(gameState: dict) -> int:
     choix: str = input("> ")
 
     if choix == "1":
-        res = 4
-    elif choix == "2":
         res = 6
+    elif choix == "2":
+        res = 4
     else:
         print("Choix invalide.")
         res = 2  
