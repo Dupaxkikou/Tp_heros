@@ -4,7 +4,7 @@ def menu() -> dict:
     nom: str = input("Quel est votre nom ? ")
     gameState: dict = {
         "nom": nom,
-        "argent": 100,
+        "argent": 0,
         "reputation": 0,
         "inventaire": [],
     }
