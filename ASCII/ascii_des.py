@@ -6,8 +6,7 @@ Deux fonctions à utiliser :
         les dés rebondissent et tournent sur le tapis, ralentissent puis
         s'arrêtent sur les faces de1 et de2 (de 1 à 6) et s'illuminent.
     ecran_resultat_des(de1, de2, gain_net, mise, argent)
-        écran JACKPOT (gros gain), GAGNÉ (confettis) ou PERDU, avec le total en
-        chiffres géants.
+        écran GAGNÉ (confettis) ou PERDU, avec le total en chiffres géants.
 
 Nécessite un terminal qui gère les couleurs ANSI 24 bits d'au moins 61 colonnes
 sur 21 lignes. Sinon (IDLE, Thonny...), une version texte simple est affichée.
@@ -221,11 +220,9 @@ def animer_lancer(de1: int, de2: int) -> None:
 # ----------------------------------------------------------------------------
 
 def issue_des(gain_net: float, mise: int) -> str:
-    """Retourne jackpot (gros gain), gagne ou perdu."""
+    """Retourne gagne ou perdu."""
     res = "perdu"
-    if gain_net >= 4 * mise:
-        res = "jackpot"
-    elif gain_net > 0:
+    if gain_net > 0:
         res = "gagne"
     return res
 
@@ -236,11 +233,8 @@ def construire_ecran_des(de1: int, de2: int, gain_net: float, mise: int, argent:
     style = STYLES[genre]
     grille = grille_vide()
 
-    if style["debut"] is None:
-        ecrire_degrade(grille, 0, style["banniere"], lambda t: melanger(OR, ROSE, t))
-    else:
-        ecrire_degrade(grille, 0, style["banniere"],
-                       lambda t: melanger(style["debut"], style["fin"], t))
+    ecrire_degrade(grille, 0, style["banniere"],
+                   lambda t: melanger(style["debut"], style["fin"], t))
 
     dessiner_nombre(grille, 2, de1 + de2, style)
 
@@ -267,7 +261,7 @@ def resultat_simple(de1: int, de2: int, gain_net: float, mise: int) -> None:
 
 
 def ecran_resultat_des(de1: int, de2: int, gain_net: float, mise: int, argent: float) -> None:
-    """Affiche l'écran de résultat du lancer (jackpot, gagné ou perdu)."""
+    """Affiche l'écran de résultat du lancer (gagné ou perdu)."""
     if couleurs_disponibles():
         animer_ecran(construire_ecran_des(de1, de2, gain_net, mise, argent),
                      issue_des(gain_net, mise))
