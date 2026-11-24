@@ -7,7 +7,7 @@ def page5(gameState: dict) -> int:
     print("le code est 1911, tu devrais le retenir pour plus tard")
     print("tu observe que la porte de la chambre est entrouverte ")
     print("Quand tu as bien retenu le code appuie sur n'importe quelle touche pour continuer")
-    input("> ")
+    choix: str = input("> ")
 
 
     if choix == "":
