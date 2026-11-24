@@ -12,7 +12,7 @@ PAGE_SUIVANTE: int = 12        # page où l'on arrive si on sort sans réveiller
 
 MESSAGES_ERREUR: list = [
     "CRAC ! Le parquet grince... elle remue un peu.",
-    "CRAAAC ! Elle ouvre un oeil... encore une erreur et c'est fini !",
+    "CRAAAC ! Elle ouvre un oeil... une erreur de plus = fin !",
     "CRAAAAC ! Elle se réveille !",
 ]
 

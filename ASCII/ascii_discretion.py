@@ -81,7 +81,7 @@ def scene(pas: int, total: int, curseur: int, zone: int, erreurs: int,
         couleur_message = VERT
     else:
         couleur_message = ROUGE
-    lignes.append(colonne(1 + (61 - len(message)) // 2) + fg(couleur_message) + message)
+    lignes.append(colonne(max(1, 1 + (61 - len(message)) // 2)) + fg(couleur_message) + message)
 
     lignes.append("")
     jauge = fg(ROUGE) + "█" * erreurs + fg(GRIS) + "░" * (erreurs_max + 1 - erreurs)
