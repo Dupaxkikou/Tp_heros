@@ -12,7 +12,6 @@ def page5(gameState: dict) -> int:
 
     if choix == "":
             res = 9
-        else:
+    else:
             res = 9
-
     return res 
