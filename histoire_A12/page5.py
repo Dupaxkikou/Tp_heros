@@ -3,10 +3,10 @@ def page5(gameState: dict) -> int:
 
     print("         ")
     print("tu rentre dans ta suite ")
-    print("tu trouve un papier avec un code dessus, tu le prend et tu le met dans ta poche")
+    print("tu va dans la chambre pour faire un dodo avant ton entretient")
+    print("Dans la table de chevet tu trouve un papier avec un code dessus, tu le prend et tu le met dans ta poche")
     print("le code est 1911, tu devrais le retenir pour plus tard")
-    print("tu observe que la porte de la chambre est entrouverte ")
-    print("Quand tu as bien retenu le code appuie sur n'importe quelle touche pour continuer")
+    print("Quand tu as bien retenu le code appuie sur n'importe quelle touche pour t'endormir")
     choix: str = input("> ")
 
 
