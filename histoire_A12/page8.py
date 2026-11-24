@@ -1,4 +1,6 @@
-def page6(gameState: dict) -> int:
+from ASCII.ascii_feu import ascii_feu
+
+def page8(gameState: dict) -> int:
     res: int = -2                     # par défaut : cas non prévu 
 
     print("Que faites-vous ?")
@@ -11,5 +13,5 @@ def page6(gameState: dict) -> int:
         res = 10
     else:
         print("Choix invalide.")
-        res = 6
+        res = 8
     return res
