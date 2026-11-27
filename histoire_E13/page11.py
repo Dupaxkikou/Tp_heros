@@ -8,7 +8,6 @@ from OUTILS.touche import (activer_touches, attendre_touche, desactiver_touches,
 
 TOTAL_PAS: int = 8
 ERREURS_PERMISES: int = 2
-PAGE_SUIVANTE: int = 12        # page où l'on arrive si on sort sans réveiller personne
 
 MESSAGES_ERREUR: list = [
     "CRAC ! Le parquet grince... elle remue un peu.",
@@ -73,43 +72,37 @@ def page11(gameState: dict) -> int:
     print("Un curseur va et vient sur une barre. Appuie sur la barre ESPACE")
     print("quand il est dans la zone verte pour faire un pas silencieux.")
     print(f"Il faut faire {TOTAL_PAS} pas jusqu'à la sortie. À la {ERREURS_PERMISES + 1}e erreur, elle se réveille !")
+    input("Appuie sur Entrée pour commencer... ")
+    anciens: object = activer_touches()
+    print("\033[2J", end="")
 
-    if not (touches_disponibles() and couleurs_disponibles()):
-        print()
-        print("(Ce mini-jeu demande un vrai terminal, pas IDLE ni Thonny : tu passes sans bruit.)")
-        res = PAGE_SUIVANTE
-    else:
-        input("Appuie sur Entrée pour commencer... ")
-        anciens: object = activer_touches()
-        print("\033[2J", end="")
-
-        pas: int = 0
-        erreurs: int = 0
-        while pas < TOTAL_PAS and erreurs <= ERREURS_PERMISES:
-            curseur: int = _jouer_un_pas(pas, erreurs)
-            reussi: bool = abs(curseur - CENTRE) <= _demi_zone(pas)
-            message: str = "Pas silencieux !"
-            if reussi:
-                pas = pas + 1
-            else:
-                erreurs = erreurs + 1
-                message = MESSAGES_ERREUR[erreurs - 1]
-                if curseur == -1:
-                    message = "Tu hésites trop : elle remue dans son sommeil !"
-
-            print("\033[H" + scene(pas, TOTAL_PAS, max(curseur, 0), _demi_zone(pas), erreurs,
-                                   ERREURS_PERMISES, message, reussi), end="", flush=True)
-            time.sleep(0.9)
-
-        desactiver_touches(anciens)
-        print("\033[2J\033[H", end="")
-
-        if erreurs > ERREURS_PERMISES:
-            print("Elle se réveille en sursaut et se met à hurler à pleins poumons !")
-            print("La sécurité du casino arrive en courant.")
-            res = -1
+    pas: int = 0
+    erreurs: int = 0
+    while pas < TOTAL_PAS and erreurs <= ERREURS_PERMISES:
+        curseur: int = _jouer_un_pas(pas, erreurs)
+        reussi: bool = abs(curseur - CENTRE) <= _demi_zone(pas)
+        message: str = "Pas silencieux !"
+        if reussi:
+            pas = pas + 1
         else:
-            print("Tu atteins la porte et la refermes sans un bruit.")
-            print("Direction l'entretien d'embauche !")
-            res = PAGE_SUIVANTE
+            erreurs = erreurs + 1
+            message = MESSAGES_ERREUR[erreurs - 1]
+            if curseur == -1:
+                message = "Tu hésites trop : elle remue dans son sommeil !"
+
+        print("\033[H" + scene(pas, TOTAL_PAS, max(curseur, 0), _demi_zone(pas), erreurs,
+                                ERREURS_PERMISES, message, reussi), end="", flush=True)
+        time.sleep(0.9)
+
+    desactiver_touches(anciens)
+    print("\033[2J\033[H", end="")
+
+    if erreurs > ERREURS_PERMISES:
+        print("Elle se réveille en sursaut et se met à hurler à pleins poumons !")
+        print("La sécurité du casino arrive en courant.")
+        res = -1
+    else:
+        print("Tu atteins la porte et la refermes sans un bruit.")
+        print("Direction l'entretien d'embauche !")
+        res = 12
     return res
