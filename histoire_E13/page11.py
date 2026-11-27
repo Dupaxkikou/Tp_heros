@@ -20,9 +20,11 @@ MESSAGES_ERREUR: list = [
 def _demi_zone(pas: int) -> int:
     """Taille de la zone verte : elle rétrécit au fil des pas."""
     res: int = 4
-    if pas >= 6:
+    if pas >= 7:
+        res = 1
+    elif pas >= 4:
         res = 2
-    elif pas >= 3:
+    elif pas >= 2:
         res = 3
     return res
 
@@ -39,7 +41,7 @@ def _position_curseur(duree: float, vitesse: float) -> int:
 def _jouer_un_pas(pas: int, erreurs: int) -> int:
     """Le curseur va et vient jusqu'à un appui sur ESPACE.
     Retourne la case où il était, ou -1 si le joueur a trop attendu."""
-    vitesse: float = 20 + 4 * pas          # le curseur accélère à chaque pas
+    vitesse: float = 22 + 6 * pas          # le curseur accélère à chaque pas
     zone: int = _demi_zone(pas)
     debut: float = time.time()
     resultat: int = -1
@@ -52,7 +54,7 @@ def _jouer_un_pas(pas: int, erreurs: int) -> int:
         print("\033[H" + scene(pas, TOTAL_PAS, curseur, zone, erreurs, ERREURS_PERMISES, "", True),
               end="", flush=True)
 
-        touche: str = attendre_touche(0.03)
+        touche: str = attendre_touche(0.02)
         if touche == " ":
             resultat = curseur
             fini = True
