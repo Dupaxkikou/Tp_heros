@@ -15,7 +15,7 @@ def page6(gameState: dict) -> int:
 
     cuisson = 0.0
     temperature = 20.0
-    chaleur = 5
+    chaleur = 0
 
     largeur = 30
 
@@ -23,9 +23,12 @@ def page6(gameState: dict) -> int:
 
     while time.time() - debut < duree and cuisson < 100:
 
-        temperature_cible = 20 + chaleur * 18
+        # Température cible selon la chaleur
+        temperature_cible = 20 + chaleur * 45
+
         temperature += (temperature_cible - temperature) * 0.08
 
+        # Progression de la cuisson
         if temperature > 60:
             cuisson += (temperature - 60) * 0.0008
 
@@ -33,6 +36,7 @@ def page6(gameState: dict) -> int:
 
         temps_restant = max(0, int(duree - (time.time() - debut)))
 
+        # Couleur température
         if temperature < 70:
             couleur_temp = bleu
         elif temperature < 120:
@@ -40,6 +44,7 @@ def page6(gameState: dict) -> int:
         else:
             couleur_temp = rouge
 
+        # Barres
         barre_temp = int(min(temperature, 200) / 200 * largeur)
         barre_cuisson = int(cuisson / 100 * largeur)
 
@@ -64,14 +69,20 @@ def page6(gameState: dict) -> int:
         print(f"Cuisson : {int(cuisson)} %")
         print(f"[{affichage_cuisson}]\n")
 
-        print(f"Chaleur de la casserole : {chaleur}/10\n")
+        print(f"Chaleur de la casserole : {chaleur}/4\n")
 
         print("========== COMMANDES ==========")
-        print("[+] Augmenter la chaleur")
-        print("[-] Diminuer la chaleur")
+        print("[Z] Augmenter la chaleur")
+        print("[S] Diminuer la chaleur")
 
-        # Petite pause
-        time.sleep(0.1)
+        # Commande du joueur
+        touche = input("\nTon choix (Z/S ou Entrée) : ").lower()
+
+        if touche == "z":
+            chaleur = min(4, chaleur + 1)
+
+        elif touche == "s":
+            chaleur = max(0, chaleur - 1)
 
     print("\n")
 
