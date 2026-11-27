@@ -1,7 +1,5 @@
 
 import time
-import os
-import msvcrt
 
 def page6(gameState: dict) -> int:
     res: int = -2
@@ -21,32 +19,20 @@ def page6(gameState: dict) -> int:
 
     largeur = 30
 
+    print("\033[2J\033[H", end="")
+
     while time.time() - debut < duree and cuisson < 100:
 
-        # Gestion des touches
-        if msvcrt.kbhit():
-            touche = msvcrt.getwch().lower()
-
-            if touche == "z":
-                chaleur = min(10, chaleur + 1)
-
-            elif touche == "s":
-                chaleur = max(0, chaleur - 1)
-
-        # Évolution de la température
         temperature_cible = 20 + chaleur * 18
         temperature += (temperature_cible - temperature) * 0.08
 
-        # Évolution de la cuisson
         if temperature > 60:
             cuisson += (temperature - 60) * 0.0008
 
         cuisson = min(100, cuisson)
 
-        # Temps restant
         temps_restant = max(0, int(duree - (time.time() - debut)))
 
-        # Couleurs
         if temperature < 70:
             couleur_temp = bleu
         elif temperature < 120:
@@ -54,53 +40,46 @@ def page6(gameState: dict) -> int:
         else:
             couleur_temp = rouge
 
-        # Barres de progression
         barre_temp = int(min(temperature, 200) / 200 * largeur)
         barre_cuisson = int(cuisson / 100 * largeur)
 
         affichage_temp = (
-            couleur_temp
-            + "█" * barre_temp
-            + reset
+            couleur_temp + "█" * barre_temp + reset
             + "░" * (largeur - barre_temp)
         )
 
         affichage_cuisson = (
-            jaune
-            + "█" * barre_cuisson
-            + reset
+            jaune + "█" * barre_cuisson + reset
             + "░" * (largeur - barre_cuisson)
         )
 
-        # Affichage
-        os.system("cls")
+        print("\033[H", end="")
 
         print("========== CUISSON ==========\n")
-
         print(f"Temps restant : {temps_restant} secondes\n")
 
         print(f"Température : {int(temperature)} °C")
-        print(f"[{affichage_temp}]")
+        print(f"[{affichage_temp}]\n")
 
-        print(f"\nCuisson : {int(cuisson)} %")
-        print(f"[{affichage_cuisson}]")
+        print(f"Cuisson : {int(cuisson)} %")
+        print(f"[{affichage_cuisson}]\n")
 
-        print(f"\nChaleur de la casserole : {chaleur}/10")
+        print(f"Chaleur de la casserole : {chaleur}/10\n")
 
-        print("\n========== COMMANDES ==========")
-        print("[Z] Augmenter la chaleur")
-        print("[S] Diminuer la chaleur")
+        print("========== COMMANDES ==========")
+        print("[+] Augmenter la chaleur")
+        print("[-] Diminuer la chaleur")
 
+        # Petite pause
         time.sleep(0.1)
 
-    os.system("cls")
+    print("\n")
 
     if cuisson >= 100:
         print(vert + "BRAVO ! Cuisson réussie !" + reset)
         res = 1
     else:
-        print(rouge + "TEMPS ÉCOULÉ ! Cuisson incomplète." + reset)
+        print(rouge + "TEMPS ÉCOULÉ !" + reset)
         res = 0
 
     return res
-
