@@ -70,7 +70,7 @@ def page11(gameState: dict) -> int:
     print()
     print("Un curseur va et vient sur une barre. Appuie sur la barre ESPACE")
     print("quand il est dans la zone verte pour faire un pas silencieux.")
-    print(f"Il faut faire {TOTAL_PAS} pas jusqu'à la porte. À la {ERREURS_PERMISES + 1}e erreur, elle se réveille !")
+    print(f"Il faut faire {TOTAL_PAS} pas jusqu'à la sortie. À la {ERREURS_PERMISES + 1}e erreur, elle se réveille !")
 
     if not (touches_disponibles() and couleurs_disponibles()):
         print()
