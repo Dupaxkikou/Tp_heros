@@ -1,17 +1,27 @@
+import time
+
 def page6(gameState: dict) -> int:
     res: int = -2                     # par défaut : cas non prévu
 
-    print("                  ")
-    print("Vous sortez donc une poële,vous sortez les raviolis")
-    print("Avec ce palais de doberman (vous êtes censé être croupier pas cuisinier), vous faites frire les raviolis")
-    print("L'huile est trop chaude, donc on met un peu d'eau pour refroidir")
-    print("Vous vous reveillez avec les sourcils brulés et la cuisine est en feu !")
-    print("Tu peux ancore annuler l'action, appuis sur une touche si tu veux revenir en arrière")
-    choix: str = input("> ")
+    rouge = "\033[31m"
+    jaune = "\033[33m"
+    bleu = "\033[34m"
+    vert = "\033[32m"
+    reset = "\033[0m"
 
+    debut :float = time.time()
+    duree :int = 30  
+    cuisson :int = 0
+    temperature :int = 20
+    chaleur :int = 0
 
-    if choix == "":
-            res = 6
-    else:
-            res = 8
+    while (time.time() - debut < duree) and cuisson != 100:
+        temps_restant :int = int(duree - (time.time() - debut))
+        print ("Temps restant : {temps_restant} secondes")
+        
+        
+        
+        
+        time.sleep(0,5)
+
     return res 
